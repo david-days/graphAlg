@@ -1,3 +1,4 @@
+#C development files
 # Prerequisites
 *.d
 
@@ -51,5 +52,30 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# debug information files
-*.dwo
+#CMake files
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+cmake-build-*/
+
+#CLion project files
+.idea
+
+#Temp files
+*.*~
+
+# Docs--generate these locally
+docs/html
+docs/latex
+docs/man
+
+# Build products that should never be included
+output/
+build-*/
+nupkgs/
+tests/bin/
