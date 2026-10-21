@@ -1,18 +1,21 @@
 add_library(${PROJECT_NAME} SHARED
         graphAlg.c
+        util/queue.c
+        util/stack.c
+        util/heap.c
 )
 
 target_include_directories(${PROJECT_NAME}
         PUBLIC
-                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
         PRIVATE
-                ${GRAPHDATA_INCLUDE_DIRS}
+        ${GRAPHDATA_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC
-                ${GRAPHDATA_LIBRARIES}
+        ${GRAPHDATA_LIBRARIES}
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
