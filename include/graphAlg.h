@@ -11,6 +11,8 @@
 #ifndef GRAPHALG_H
 #define GRAPHALG_H
 
+#include "graphAlgCut.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

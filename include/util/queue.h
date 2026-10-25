@@ -5,7 +5,16 @@
 #ifndef GRAPHALG_QUEUE_H
 #define GRAPHALG_QUEUE_H
 
-#include <util/ds_types.h>
+/**
+ * Doubly-linked list node (used by queue).
+ */
+typedef struct item_t item_t, *item;
+
+struct item_t {
+    void *data;
+    item prev;
+    item next;
+};
 
 typedef struct {
     item front; /* dequeue end */

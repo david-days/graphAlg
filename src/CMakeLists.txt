@@ -1,8 +1,12 @@
 add_library(${PROJECT_NAME} SHARED
         graphAlg.c
+        graphAlgCut.c
         util/queue.c
         util/stack.c
         util/heap.c
+        util/lists.c
+        util/quicksort.c
+        util/selectionsort.c
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -38,6 +42,7 @@ install(TARGETS ${PROJECT_NAME}
 
 install(FILES
         ${PROJECT_SOURCE_DIR}/include/graphAlg.h
+        ${PROJECT_SOURCE_DIR}/include/graphAlgCut.h
         DESTINATION include
 )
 
