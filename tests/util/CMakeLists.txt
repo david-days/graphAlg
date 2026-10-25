@@ -124,3 +124,24 @@ target_link_libraries(selectionsorttests PRIVATE
 target_compile_options(selectionsorttests PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
 
 add_test(NAME selectionsorttests COMMAND selectionsorttests)
+
+add_executable(mergesorttests
+        mergesorttests.c
+)
+
+target_include_directories(mergesorttests PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${GRAPHDATA_INCLUDE_DIRS}
+        ${CHECK_INCLUDE_DIRS}
+)
+
+target_link_libraries(mergesorttests PRIVATE
+        ${PROJECT_NAME}
+        ${GRAPHDATA_LIBRARIES}
+        ${CHECK_LIBRARIES}
+)
+
+target_compile_options(mergesorttests PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
+
+add_test(NAME mergesorttests COMMAND mergesorttests)
+
