@@ -145,3 +145,66 @@ target_compile_options(mergesorttests PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
 
 add_test(NAME mergesorttests COMMAND mergesorttests)
 
+# Hash utility tests
+add_executable(hashtests
+        hashtests.c
+)
+
+target_include_directories(hashtests PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${GRAPHDATA_INCLUDE_DIRS}
+        ${CHECK_INCLUDE_DIRS}
+)
+
+target_link_libraries(hashtests PRIVATE
+        ${PROJECT_NAME}
+        ${GRAPHDATA_LIBRARIES}
+        ${CHECK_LIBRARIES}
+)
+
+target_compile_options(hashtests PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
+
+add_test(NAME hashtests COMMAND hashtests)
+
+# Hash set tests
+add_executable(hashsettests
+        hashsettests.c
+)
+
+target_include_directories(hashsettests PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${GRAPHDATA_INCLUDE_DIRS}
+        ${CHECK_INCLUDE_DIRS}
+)
+
+target_link_libraries(hashsettests PRIVATE
+        ${PROJECT_NAME}
+        ${GRAPHDATA_LIBRARIES}
+        ${CHECK_LIBRARIES}
+)
+
+target_compile_options(hashsettests PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
+
+add_test(NAME hashsettests COMMAND hashsettests)
+
+# Hash table tests
+add_executable(hashtabletests
+        hashtabletests.c
+)
+
+target_include_directories(hashtabletests PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${GRAPHDATA_INCLUDE_DIRS}
+        ${CHECK_INCLUDE_DIRS}
+)
+
+target_link_libraries(hashtabletests PRIVATE
+        ${PROJECT_NAME}
+        ${GRAPHDATA_LIBRARIES}
+        ${CHECK_LIBRARIES}
+)
+
+target_compile_options(hashtabletests PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
+
+add_test(NAME hashtabletests COMMAND hashtabletests)
+

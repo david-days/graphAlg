@@ -8,6 +8,9 @@ add_library(${PROJECT_NAME} SHARED
         util/quicksort.c
         util/selectionsort.c
         util/mergesort.c
+        util/hash.c
+        util/hashset.c
+        util/hashtable.c
 )
 
 target_include_directories(${PROJECT_NAME}
