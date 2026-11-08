@@ -12,6 +12,7 @@
 #define GRAPHALG_H
 
 #include "graphAlgCut.h"
+#include "graphAlgSearch.h"
 
 #ifdef __cplusplus
 extern "C" {

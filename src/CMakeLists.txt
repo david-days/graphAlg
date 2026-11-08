@@ -1,6 +1,7 @@
 add_library(${PROJECT_NAME} SHARED
         graphAlg.c
         graphAlgCut.c
+        graphAlgSearch.c
         util/queue.c
         util/stack.c
         util/heap.c
@@ -47,6 +48,7 @@ install(TARGETS ${PROJECT_NAME}
 install(FILES
         ${PROJECT_SOURCE_DIR}/include/graphAlg.h
         ${PROJECT_SOURCE_DIR}/include/graphAlgCut.h
+        ${PROJECT_SOURCE_DIR}/include/graphAlgSearch.h
         DESTINATION include
 )
 
