@@ -1,6 +1,6 @@
 /**
  * @file graphAlgSearch.h
- * @brief BFS / DFS family: path and reachability results over graphData.
+ * @brief BFS / DFS family: path and single-source trees over graphData.
  *
  * Node identifiers are size_t, matching the installed graphData public API.
  * Result buffers are always-copy: release with graphAlgPathResultDestroy().
@@ -66,6 +66,22 @@ int graphAlgBfsPath(struct graphops_t *ops, struct graph_t *g,
  * @return GRAPH_OK on success; GRAPH_ERR if bad args, source absent, or OOM
  */
 int graphAlgBfsFrom(struct graphops_t *ops, struct graph_t *g,
+                    size_t source,
+                    graphAlgPathResult *out);
+
+/**
+ * Single-source DFS: all nodes reachable from source.
+ *
+ * On success, out holds the reachable set in discovery order with parallel
+ * parent (DFS tree) and dist.  dist[i] is hops from source along the DFS
+ * tree (tree depth), not unweighted shortest-path distance in the graph.
+ *
+ * Follows outgoing neighbors as exposed by ops->getNeighbors (directed as
+ * stored; undirected backends already present both directions).
+ *
+ * @return GRAPH_OK on success; GRAPH_ERR if bad args, source absent, or OOM
+ */
+int graphAlgDfsFrom(struct graphops_t *ops, struct graph_t *g,
                     size_t source,
                     graphAlgPathResult *out);
 
