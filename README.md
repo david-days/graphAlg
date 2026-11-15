@@ -42,7 +42,7 @@ const char *v = graphAlgVersion();
 
 ## Layout
 
-Flat repo (improvement over graphData’s nested `graphDataLib/`):
+Flat repo (same shape as graphdata):
 
 | Path | Role |
 |------|------|
