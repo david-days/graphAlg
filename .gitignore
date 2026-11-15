@@ -75,6 +75,9 @@ docs/html
 docs/latex
 docs/man
 
+# Codacy CLI local config/cache
+.codacy/
+
 # Build products that should never be included
 output/
 build-*/
