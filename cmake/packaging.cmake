@@ -49,7 +49,7 @@ macro(configPackaging)
             @ONLY
     )
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/graphalg.pc
-            DESTINATION lib/pkgconfig
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
     )
 
     include(CPack)

@@ -163,15 +163,12 @@ size_t nextEratosthenesPrime(size_t *floor) {
 
         free(sieve);
 
-        /* No prime in (lo, bound); expand the search window */
+        /* No prime in (lo, bound); expand the search window.
+         * Do not calloc(SIZE_MAX): fortify/-Walloc-size-larger-than reject it. */
         if (bound > SIZE_MAX / 2) {
-            if (bound == SIZE_MAX) {
-                return 0;
-            }
-            bound = SIZE_MAX;
-        } else {
-            bound *= 2;
+            return 0;
         }
+        bound *= 2;
     }
 }
 

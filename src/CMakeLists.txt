@@ -40,16 +40,16 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 include(${PROJECT_SOURCE_DIR}/cmake/packaging.cmake)
 
 install(TARGETS ${PROJECT_NAME}
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 install(FILES
         ${PROJECT_SOURCE_DIR}/include/graphAlg.h
         ${PROJECT_SOURCE_DIR}/include/graphAlgCut.h
         ${PROJECT_SOURCE_DIR}/include/graphAlgSearch.h
-        DESTINATION include
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 configPackaging()
