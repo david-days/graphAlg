@@ -1,11 +1,15 @@
 /**
  * @file graphAlgSearch.h
- * @brief BFS / DFS family: path and single-source trees over graphData.
+ * @brief Search / reachability family over graphData: paths, single-source
+ * trees, and connected components (undirected / symmetric adjacency).
  *
  * Node identifiers are size_t, matching the installed graphData public API.
- * Result buffers are always-copy: release with graphAlgPathResultDestroy().
+ * Result buffers are always-copy: release with the matching *Destroy helper.
  * Algorithm scratch (queue, visited set, parent map) stays inside graphAlg —
  * never on graph_t via impl/ headers.
+ *
+ * Topic headers may be reshuffled later; this file is the current home for
+ * "what can you search / reach" APIs.
  */
 
 #ifndef GRAPHALG_SEARCH_H
@@ -84,6 +88,47 @@ int graphAlgBfsFrom(struct graphops_t *ops, struct graph_t *g,
 int graphAlgDfsFrom(struct graphops_t *ops, struct graph_t *g,
                     size_t source,
                     graphAlgPathResult *out);
+
+/**
+ * Partition of graph nodes into connected components.
+ *
+ * Jagged always-copy layout:
+ * - nodes[c][0 .. sizes[c]) — node ids in component c (DfsFrom discovery order)
+ * - sizes[c] — length of nodes[c]
+ * - n — component count
+ *
+ * Component order follows listNodes root order (first unvisited node starts
+ * a new component). On GRAPH_OK the caller owns all buffers; release with
+ * graphAlgComponentsResultDestroy(). On GRAPH_ERR the implementation leaves
+ * *out clean (no partial ownership).
+ */
+typedef struct {
+    size_t **nodes;
+    size_t *sizes;
+    size_t n;
+} graphAlgComponentsResult;
+
+/**
+ * Free owned buffers inside @p r and zero the struct.
+ * Does not free @p r itself. Safe on NULL.
+ */
+void graphAlgComponentsResultDestroy(graphAlgComponentsResult *r);
+
+/**
+ * Connected components under getNeighbors as stored.
+ *
+ * Requires undirected semantics via both directions already present in the
+ * adjacency the backend exposes. LINKED|UNDIRECTED (and ARRAY undirected) store
+ * a single min(u,v)→max(u,v) record, so getNeighbors is not symmetric there —
+ * do not rely on that flag alone. Prefer LINKED|DIRECTED with both arcs, or
+ * HASHED|UNDIRECTED. Digraph weak-CC and strongly connected components are
+ * deferred. Implementation reuses graphAlgDfsFrom from each unvisited
+ * listNodes root.
+ *
+ * @return GRAPH_OK on success; GRAPH_ERR if bad args or OOM
+ */
+int graphAlgConnectedComponents(struct graphops_t *ops, struct graph_t *g,
+                                graphAlgComponentsResult *out);
 
 #ifdef __cplusplus
 }

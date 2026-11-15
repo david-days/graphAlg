@@ -604,3 +604,122 @@ int graphAlgDfsFrom(struct graphops_t *ops, struct graph_t *g,
     list_free(seenOrder);
     return GRAPH_OK;
 }
+
+void graphAlgComponentsResultDestroy(graphAlgComponentsResult *r) {
+    if (r == NULL) {
+        return;
+    }
+    if (r->nodes != NULL) {
+        for (size_t i=0; i <r->n; i++) {
+            free(r->nodes[i]);
+        }
+    }
+
+    free(r->nodes);
+    free(r->sizes);
+    memset(r, 0, sizeof(*r));
+}
+
+static void freeCCompTracking(list clist, struct node_t *nlist, graphAlgComponentsResult *ccomps, hashset seen) {
+    void *item = NULL;
+    if (clist != NULL) {
+        while (clist->head != NULL) {
+            if (list_removeAt(clist, 0, &item)) {
+                graphAlgPathResultDestroy((graphAlgPathResult *)item);
+                free(item);
+            }
+        }
+    }
+    list_free(clist);
+    destroyNodes((void **)&nlist);
+    hs_free(seen);
+    graphAlgComponentsResultDestroy(ccomps);
+}
+
+int graphAlgConnectedComponents(struct graphops_t *ops, struct graph_t *graph,
+                                graphAlgComponentsResult *out) {
+    if (ops == NULL || graph == NULL || out == NULL || ops->listNodes == NULL
+        || ops->getNeighbors == NULL || ops->nodeCount == NULL) {
+        return GRAPH_ERR;
+    }
+
+    list ccomp_list = list_create();
+    if (ccomp_list == NULL) {
+        return GRAPH_ERR;
+    }
+    struct node_t *nlist = ops->listNodes(graph);
+    if (nlist == NULL) {
+        memset(out, 0, sizeof(*out));
+        list_free(ccomp_list);
+        return GRAPH_OK;
+    }
+
+    size_t ncount = ops->nodeCount(graph);
+    hashset seen = hs_create(ncount);
+    if (seen == NULL) {
+        freeCCompTracking(ccomp_list, nlist, NULL, NULL);
+        return GRAPH_ERR;
+    }
+
+
+    struct node_t *curr = nlist;
+    size_t keysize = sizeof(size_t);
+    while (curr != NULL) {
+        if (hs_contains(seen, &curr->nodeid, keysize)) {
+            curr = curr->next;
+            continue;
+        }
+        graphAlgPathResult *ccomp = malloc(sizeof(graphAlgPathResult));
+        if (ccomp == NULL) {
+            freeCCompTracking(ccomp_list, nlist, NULL, seen);
+            return GRAPH_ERR;
+        }
+        memset(ccomp, 0, sizeof(graphAlgPathResult));
+
+        if (graphAlgDfsFrom(ops, graph, curr->nodeid, ccomp) == GRAPH_OK) {
+            for (size_t i=0; i<ccomp->n; i++) {
+                //add to list, no need to check
+                hs_add(seen, &ccomp->nodes[i], keysize);
+            }
+            list_add(ccomp_list, ccomp, 0.0);
+        } else {
+            free(ccomp);
+            freeCCompTracking(ccomp_list, nlist, NULL, seen);
+            return GRAPH_ERR;
+        }
+        curr = curr->next;
+    }
+
+    memset(out, 0, sizeof(graphAlgComponentsResult));
+    out->n = ccomp_list->count;
+    graphAlgPathResult *ccomp = NULL;
+    if (out->n > 0) {
+        out->nodes = calloc(out->n, sizeof(size_t *));
+        out->sizes = malloc(out->n * sizeof(size_t));
+        if (out->nodes == NULL || out->sizes == NULL) {
+            graphAlgComponentsResultDestroy(out);
+            freeCCompTracking(ccomp_list, nlist, NULL, seen);
+            return GRAPH_ERR;
+        }
+        for (size_t i=0; i< out->n; i++) {
+            if (!list_getAt(ccomp_list, i, (void **)&ccomp)) {
+                graphAlgComponentsResultDestroy(out);
+                freeCCompTracking(ccomp_list, nlist, NULL, seen);
+                return GRAPH_ERR;
+            }
+            size_t *cnodes = malloc(sizeof(size_t) * ccomp->n);
+            if (cnodes == NULL) {
+                graphAlgComponentsResultDestroy(out);
+                freeCCompTracking(ccomp_list, nlist, NULL, seen);
+                return GRAPH_ERR;
+            }
+            memcpy(cnodes, ccomp->nodes, sizeof(size_t) * ccomp->n);
+            out->nodes[i] = cnodes;
+            out->sizes[i] = ccomp->n;
+            graphAlgPathResultDestroy(ccomp);
+            ccomp = NULL;
+        }
+    }
+    freeCCompTracking(ccomp_list, nlist, NULL, seen);
+    return GRAPH_OK;
+}
