@@ -3,6 +3,7 @@
  */
 
 #include <check.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <util/heap.h>
@@ -134,6 +135,60 @@ START_TEST(nullPayloadAllowed) {
 }
 END_TEST
 
+START_TEST(rejectNan) {
+    int a = 1;
+    heap h = h_create(4, true);
+    ck_assert_ptr_nonnull(h);
+
+    ck_assert(!h_push(h, &a, NAN));
+    ck_assert(h_empty(h));
+
+    ck_assert(h_free(h));
+}
+END_TEST
+
+START_TEST(minHeapWithInf) {
+    int neg = -1, mid = 0, pos = 1;
+    void *out = NULL;
+    heap h = h_create(8, true);
+    ck_assert_ptr_nonnull(h);
+
+    ck_assert(h_push(h, &pos, INFINITY));
+    ck_assert(h_push(h, &mid, 0.0));
+    ck_assert(h_push(h, &neg, -INFINITY));
+
+    ck_assert(h_pop(h, &out));
+    ck_assert_ptr_eq(out, &neg);
+    ck_assert(h_pop(h, &out));
+    ck_assert_ptr_eq(out, &mid);
+    ck_assert(h_pop(h, &out));
+    ck_assert_ptr_eq(out, &pos);
+
+    ck_assert(h_free(h));
+}
+END_TEST
+
+START_TEST(fractionalOrder) {
+    int a = 1, b = 2, c = 3;
+    void *out = NULL;
+    heap h = h_create(8, true);
+    ck_assert_ptr_nonnull(h);
+
+    ck_assert(h_push(h, &c, 1.0));
+    ck_assert(h_push(h, &a, 0.25));
+    ck_assert(h_push(h, &b, 0.5));
+
+    ck_assert(h_pop(h, &out));
+    ck_assert_ptr_eq(out, &a);
+    ck_assert(h_pop(h, &out));
+    ck_assert_ptr_eq(out, &b);
+    ck_assert(h_pop(h, &out));
+    ck_assert_ptr_eq(out, &c);
+
+    ck_assert(h_free(h));
+}
+END_TEST
+
 Suite *heap_suite(void) {
     Suite *s = suite_create("heap");
     TCase *tc = tcase_create("core");
@@ -145,6 +200,9 @@ Suite *heap_suite(void) {
     tcase_add_test(tc, rejectWhenFull);
     tcase_add_test(tc, popEmpty);
     tcase_add_test(tc, nullPayloadAllowed);
+    tcase_add_test(tc, rejectNan);
+    tcase_add_test(tc, minHeapWithInf);
+    tcase_add_test(tc, fractionalOrder);
     suite_add_tcase(s, tc);
     return s;
 }

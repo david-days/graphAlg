@@ -10,7 +10,7 @@
 
 typedef struct {
     void *data;
-    size_t priority;
+    double priority;
 } hitem_t;
 
 typedef hitem_t *hitem;
@@ -57,10 +57,10 @@ void *h_peek(heap h);
  * Push a value with the given priority.
  * @param h heap to be used
  * @param data payload (caller retains ownership)
- * @param priority ordering key
- * @return true if successful, otherwise false (NULL handle or full)
+ * @param priority ordering key; ±INFINITY allowed; NaN rejected
+ * @return true on success; false if NULL handle, full, or NaN priority
  */
-int h_push(heap h, void *data, size_t priority);
+int h_push(heap h, void *data, double priority);
 
 /**
  * Remove the root item and optionally return its value.

@@ -1,6 +1,7 @@
 //
 // Created by david on 10/19/26.
 //
+#include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <util/heap.h>
@@ -78,8 +79,8 @@ void *h_peek(heap h) {
     return h->items[1].data;
 }
 
-int h_push(heap h, void *data, size_t priority) {
-    if (h == NULL || h->size >= h->capacity) {
+int h_push(heap h, void *data, double priority) {
+    if (h == NULL || h->size >= h->capacity || isnan(priority)) {
         return false;
     }
     h->size++;

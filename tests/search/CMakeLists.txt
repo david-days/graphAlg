@@ -1,4 +1,4 @@
-# graphAlg search (BFS path / BFS-from / DFS-from / connected components) tests
+# graphAlg search (BFS / DFS / connected components / Dijkstra path) tests
 
 add_executable(bfspathtests
         bfspathtests.c
@@ -79,3 +79,24 @@ target_link_libraries(connectedcomponentstests PRIVATE
 target_compile_options(connectedcomponentstests PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
 
 add_test(NAME connectedcomponentstests COMMAND connectedcomponentstests)
+
+add_executable(dijkstrapathtests
+        dijkstrapathtests.c
+)
+
+target_include_directories(dijkstrapathtests PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${GRAPHDATA_INCLUDE_DIRS}
+        ${CHECK_INCLUDE_DIRS}
+)
+
+target_link_libraries(dijkstrapathtests PRIVATE
+        ${PROJECT_NAME}
+        ${GRAPHDATA_LIBRARIES}
+        ${CHECK_LIBRARIES}
+        m
+)
+
+target_compile_options(dijkstrapathtests PRIVATE ${GRAPHDATA_CFLAGS_OTHER})
+
+add_test(NAME dijkstrapathtests COMMAND dijkstrapathtests)

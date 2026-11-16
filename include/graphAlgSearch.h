@@ -130,6 +130,42 @@ void graphAlgComponentsResultDestroy(graphAlgComponentsResult *r);
 int graphAlgConnectedComponents(struct graphops_t *ops, struct graph_t *g,
                                 graphAlgComponentsResult *out);
 
+
+/**
+ * Edge weight for weighted search.
+ * @return non-negative finite cost, 0 for free/"must travel",
+ *         +INFINITY to treat as non-edge, NaN/-INFINITY invalid
+ */
+typedef double (*graphAlgEdgeWeightFn)(size_t u, size_t v,
+                                      double cap, double flow,
+                                      void *ctx);
+
+typedef struct {
+    size_t *nodes;    /* length n — see contract */
+    double *dist;     /* parallel; 0 at source; +INFINITY if unreachable */
+    size_t *parent;   /* predecessor id; source: parent == itself;
+                         unreachable: parent == SIZE_MAX (recommend) */
+    size_t n;
+} graphAlgWeightedPathResult;
+
+void graphAlgWeightedPathResultDestroy(graphAlgWeightedPathResult *r);
+
+/**
+ * Weighted shortest path source → target (Dijkstra).
+ *
+ * weight_fn NULL → use edge cap. ctx may be NULL.
+ * Zero weights allowed. Negative weight → GRAPH_ERR.
+ * +INFINITY from weight_fn (or cap) → skip that arc.
+ * NaN or -INFINITY from weight_fn → GRAPH_ERR.
+ *
+ * On GRAPH_OK: out holds the path source..target (n >= 1), dist finite.
+ * Unreachable target / bad args / OOM → GRAPH_ERR, *out clean.
+ */
+int graphAlgDijkstraPath(struct graphops_t *ops, struct graph_t *g,
+                         size_t source, size_t target,
+                         graphAlgEdgeWeightFn weight_fn, void *ctx,
+                         graphAlgWeightedPathResult *out);
+
 #ifdef __cplusplus
 }
 #endif
